@@ -1,6 +1,5 @@
 package ro.siit.finalProject.controller;
 
-import com.sun.xml.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,9 +8,10 @@ import org.springframework.web.servlet.view.RedirectView;
 import ro.siit.finalProject.model.Ingredient;
 import ro.siit.finalProject.model.Recipe;
 import ro.siit.finalProject.model.RecipeItem;
-import ro.siit.finalProject.model.ShoppingListItem;
+import ro.siit.finalProject.model.ShoppingList;
 import ro.siit.finalProject.service.IngredientsService;
 import ro.siit.finalProject.service.RecipeService;
+import ro.siit.finalProject.service.ShoppingListsService;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,8 @@ public class RecipesController {
     private RecipeService recipeService;
     @Autowired
     private IngredientsService ingredientsService;
-
+    @Autowired
+    private ShoppingListsService shoppingListsService;
 
     @GetMapping("/")
     public String getRecipes(Model model) {
@@ -34,13 +35,13 @@ public class RecipesController {
     }
 
     @GetMapping("/add")
-    public String addItemForm(Model model) {
+    public String getRecipeAddForm(Model model) {
         return "recipes/addRecipeForm";
     }
 
     @PostMapping("/add")
-    public RedirectView addRecipeName(Model model,
-                                      @RequestParam("recipe_name") String name) {
+    public RedirectView addRecipe(Model model,
+                                  @RequestParam("recipeName") String name) {
         Recipe recipe = new Recipe();
         recipe.setId(UUID.randomUUID());
         recipe.setName(name);
@@ -55,41 +56,66 @@ public class RecipesController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editRecipe(Model model, @PathVariable("id") UUID recipeId) {
-        Optional<Recipe> recipeToEdit = recipeService.findById(recipeId);
-        model.addAttribute("recipe", recipeToEdit.get());
+    public String getRecipeEditForm(Model model, @PathVariable("id") UUID recipeId) {
+        Recipe recipeToEdit = recipeService.findById(recipeId);
+        model.addAttribute("recipe", recipeToEdit);
         return "recipes/editRecipeForm";
     }
 
-
     @GetMapping("/edit/{id}/addRecipeItem")
-    public String addIngredient(Model model, @PathVariable("id") UUID recipeId) {
+    public String getRecipeItemAddForm(Model model, @PathVariable("id") UUID recipeId) {
         model.addAttribute("ingredients", ingredientsService.getIngredients());
-        Optional<Recipe> recipeToEdit = recipeService.findById(recipeId);
-        model.addAttribute("recipe", recipeToEdit.get());
+        Recipe recipeToEdit = recipeService.findById(recipeId);
+        model.addAttribute("recipe", recipeToEdit);
         return "recipes/addRecipeItemForm";
     }
 
     @PostMapping("/edit/addRecipeItem")
-    public RedirectView addItem(Model model,
-                                @RequestParam("ingredient_id") UUID ingredientId,
-                                @RequestParam("recipeItem_quantity") Integer itemQuantity,
-                                @RequestParam("recipe_id") UUID recipeId) {
+    public RedirectView addRecipeItem(Model model,
+                                      @RequestParam("ingredientId") UUID ingredientId,
+                                      @RequestParam("recipeItemQuantity") Integer itemQuantity,
+                                      @RequestParam("recipeId") UUID recipeId) {
         Ingredient ingredientById = ingredientsService.findIngredientById(ingredientId).get();
-        Recipe recipeById = recipeService.findById(recipeId).get();
-        RecipeItem recipeItem = new RecipeItem();
-        recipeItem.setId(UUID.randomUUID());
-        recipeItem.setIngredient(ingredientById);
-        recipeItem.setQuantity(itemQuantity);
-        recipeItem.setRecipe(recipeById);
-        recipeService.addRecipeItem(recipeItem);
+        Recipe recipeById = recipeService.findById(recipeId);
+        recipeService.addRecipeItem(ingredientById, itemQuantity, recipeById);
         return new RedirectView("/recipes/edit/" + recipeId);
     }
 
-    @GetMapping("items/delete/{recipe_item_id}")
-    public RedirectView deleteIngredient(Model model, @PathVariable("recipe_item_id") UUID recipeItemId) {
+    @GetMapping("items/delete/{recipe_Item_Id}")
+    public RedirectView deleteRecipeItem(Model model,
+                                         @PathVariable("recipe_Item_Id") UUID recipeItemId) {
         Optional<RecipeItem> recipeItem = recipeService.findItem(recipeItemId);
         recipeService.deleteRecipeItem(recipeItemId);
         return new RedirectView("/recipes/edit/" + recipeItem.get().getRecipe().getId());
     }
+
+    @PostMapping("/edit/{id}")
+    public RedirectView editRecipeName(Model model,
+                                       @RequestParam("recipeId") UUID recipeId,
+                                       @RequestParam("recipeName") String name) {
+        Recipe recipe = recipeService.findById(recipeId);
+        recipe.setName(name);
+        recipeService.save(recipe);
+        return new RedirectView("/recipes/edit/" + recipeId);
+    }
+
+    @PostMapping("/")
+    public RedirectView saveRecipe(Model model,
+                                   @RequestParam("recipeItemId") UUID recipeItemId,
+                                   @RequestParam("recipeItemQuantity") Integer itemQuantity) {
+        Optional<RecipeItem> recipeItem = recipeService.findItem(recipeItemId);
+        recipeItem.get().setQuantity(itemQuantity);
+        recipeService.save(recipeItem.get().getRecipe());
+        return new RedirectView("/recipes/");
+    }
+
+    @GetMapping("/{id}/addToShoppingList")
+    public String addItemsToShoppingListAddForm(Model model, @PathVariable("id") UUID recipeId) {
+        model.addAttribute("shoppingLists", shoppingListsService.getShoppingListsForCurrentUser());
+        Recipe recipeToEdit = recipeService.findById(recipeId);
+        model.addAttribute("recipe", recipeToEdit);
+        return "recipes/addRecipeItemsToShoppingListForm";
+    }
+
+
 }

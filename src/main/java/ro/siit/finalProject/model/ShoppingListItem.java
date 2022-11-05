@@ -49,4 +49,12 @@ public class ShoppingListItem {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+    public ShoppingList getShoppingList() {
+        return shoppingList;
+    }
+
+    public void setShoppingList(ShoppingList shoppingList) {
+        this.shoppingList = shoppingList;
+    }
 }

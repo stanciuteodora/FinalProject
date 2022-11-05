@@ -1,17 +1,21 @@
 package ro.siit.finalProject.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="ingredients")
+@Table(name = "ingredients")
 public class Ingredient {
     @Id
     private UUID id;
     private String name;
     private String unitOfMeasure;
+    @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
+    private List<RecipeItem> recipeItems;
+
+    @OneToMany(mappedBy = "shoppingList", fetch = FetchType.LAZY)
+    private List<ShoppingListItem> shoppingListItems;
 
     public Ingredient() {
     }
@@ -44,5 +48,21 @@ public class Ingredient {
 
     public void setUnitOfMeasure(String unitOfMeasure) {
         this.unitOfMeasure = unitOfMeasure;
+    }
+
+    public List<RecipeItem> getRecipeItems() {
+        return recipeItems;
+    }
+
+    public void setRecipeItems(List<RecipeItem> recipeItems) {
+        this.recipeItems = recipeItems;
+    }
+
+    public List<ShoppingListItem> getShoppingListItems() {
+        return shoppingListItems;
+    }
+
+    public void setShoppingListItems(List<ShoppingListItem> shoppingListItems) {
+        this.shoppingListItems = shoppingListItems;
     }
 }

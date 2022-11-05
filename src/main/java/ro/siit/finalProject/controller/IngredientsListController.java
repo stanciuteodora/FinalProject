@@ -31,9 +31,9 @@ public class IngredientsListController {
     }
 
     @PostMapping("/add")
-    public RedirectView addItem(Model model,
-                                @RequestParam("ingredient_name") String name,
-                                @RequestParam("ingredient_unitOfMeasure") String unitOfMeasure) {
+    public RedirectView addIngredient(Model model,
+                                @RequestParam("ingredientName") String name,
+                                @RequestParam("ingredientUnitOfMeasure") String unitOfMeasure) {
         Ingredient ingredient = new Ingredient();
         ingredient.setId(UUID.randomUUID());
         ingredient.setName(name);
@@ -49,7 +49,7 @@ public class IngredientsListController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editIngredientForm(Model model, @PathVariable("id") UUID id) {
+    public String getIngredientEditForm(Model model, @PathVariable("id") UUID id) {
         Optional<Ingredient> ingredientToEdit = ingredientsService.findIngredientById(id);
         model.addAttribute("ingredient", ingredientToEdit.get());
         return "ingredients/editForm";
@@ -57,9 +57,9 @@ public class IngredientsListController {
 
     @PostMapping("/edit")
     public RedirectView editIngredient(Model model,
-                                       @RequestParam("ingredient_id") UUID id,
-                                       @RequestParam("ingredient_name") String name,
-                                       @RequestParam("ingredient_unitOfMeasure") String unitOfMeasure) {
+                                       @RequestParam("ingredientId") UUID id,
+                                       @RequestParam("ingredientName") String name,
+                                       @RequestParam("ingredientUnitOfMeasure") String unitOfMeasure) {
         Optional<Ingredient> ingredient = ingredientsService.findIngredientById(id);
         ingredient.get().setName(name);
         ingredient.get().setUnitOfMeasure(unitOfMeasure);

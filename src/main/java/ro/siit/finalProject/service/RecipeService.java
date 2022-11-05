@@ -2,8 +2,10 @@ package ro.siit.finalProject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.siit.finalProject.model.Ingredient;
 import ro.siit.finalProject.model.Recipe;
 import ro.siit.finalProject.model.RecipeItem;
+import ro.siit.finalProject.model.ShoppingListItem;
 import ro.siit.finalProject.repository.JpaRecipeItemsRepository;
 import ro.siit.finalProject.repository.JpaRecipeRepository;
 
@@ -30,23 +32,32 @@ public class RecipeService {
         jpaRecipeRepository.deleteById(recipeId);
     }
 
-    public Optional<Recipe> findById(UUID recipeId) {
-        return jpaRecipeRepository.findById(recipeId);
+    public Recipe findById(UUID recipeId) {
+        return jpaRecipeRepository.findById(recipeId).get();
     }
 
-    public void addRecipeItem(RecipeItem item) {
-//        boolean ifPresent = true;
-//        for (RecipeItem itemOnTheList : jpaRecipeItemsRepository.findAll()) {
-//            if (itemOnTheList.getIngredient().getId().equals(item.getIngredient().getId())) {
-//                itemOnTheList.setQuantity(item.getQuantity() + itemOnTheList.getQuantity());
-//                jpaRecipeItemsRepository.saveAndFlush(itemOnTheList);
-//                ifPresent = false;
-//            }
-//        }
-//        if (ifPresent) {
-        jpaRecipeItemsRepository.saveAndFlush(item);
-//        }
+
+    public void addRecipeItem(Ingredient ingredientById, Integer itemQuantity, Recipe recipeById) {
+        RecipeItem recipeItem = new RecipeItem();
+        recipeItem.setId(UUID.randomUUID());
+        recipeItem.setIngredient(ingredientById);
+        recipeItem.setQuantity(itemQuantity);
+        recipeItem.setRecipe(recipeById);
+        Boolean ifPresent = true;
+        for (RecipeItem itemOnTheList : jpaRecipeItemsRepository.findAll()) {
+            if (itemOnTheList.getIngredient().getId().equals(recipeItem.getIngredient().getId())
+                    && itemOnTheList.getRecipe().getId().equals(recipeItem.getRecipe().getId())) {
+                itemOnTheList.setQuantity(recipeItem.getQuantity() + itemOnTheList.getQuantity());
+                jpaRecipeItemsRepository.saveAndFlush(itemOnTheList);
+                ifPresent = false;
+            }
+        }
+        if (ifPresent) {
+
+            jpaRecipeItemsRepository.saveAndFlush(recipeItem);
+        }
     }
+
 
     public void deleteRecipeItem(UUID id) {
         jpaRecipeItemsRepository.deleteById(id);
@@ -54,6 +65,10 @@ public class RecipeService {
 
     public Optional<RecipeItem> findItem(UUID recipeItemId) {
         return jpaRecipeItemsRepository.findById(recipeItemId);
+    }
+
+    public void save(Recipe recipe) {
+        jpaRecipeRepository.saveAndFlush(recipe);
     }
 }
 

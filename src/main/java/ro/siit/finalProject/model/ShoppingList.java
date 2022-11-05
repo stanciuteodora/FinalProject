@@ -13,6 +13,10 @@ public class ShoppingList {
     @OneToMany(mappedBy = "shoppingList", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ShoppingListItem> items;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public ShoppingList() {
     }
 
@@ -40,4 +44,13 @@ public class ShoppingList {
     public void setItems(List<ShoppingListItem> items) {
         this.items = items;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

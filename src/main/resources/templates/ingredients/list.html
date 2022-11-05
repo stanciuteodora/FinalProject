@@ -34,7 +34,12 @@
                         <td th:text="${ingredientItem.unitOfMeasure}"> </td>
                         <td>
                             <a class="btn btn-outline-secondary" th:href="@{/ingredients/edit/{id}(id=${ingredientItem.id})}"> Edit </a>
-                            <a class="btn btn-outline-danger" th:href="@{/ingredients/delete/{id}(id=${ingredientItem.id})}"> Delete </a>
+                            <span th:if="${not #lists.isEmpty(ingredientItem.recipeItems)}" >
+                                <a class="btn btn-outline-light" href="#"> Disabled </a>
+                            </span>
+                            <span th:unless="${not #lists.isEmpty(ingredientItem.recipeItems)}" >
+                                <a class="btn btn-outline-danger" th:href="@{/ingredients/delete/{id}(id=${ingredientItem.id})}"> Delete </a>
+                            </span>
                         </td>
                     </tr>
                 </tbody>
