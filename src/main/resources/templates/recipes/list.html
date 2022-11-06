@@ -1,42 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Recipes list</title>
-        <!-- CSS only -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-        <!-- JavaScript Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Recipes list</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous"></script>
 
-    </head>
-    <body>
-        <div th:replace="~{fragments/navbar :: navbar}"></div>
-        <div class="container">
-            <h2>Recipes list</h2>
-            <p>
-                <a th:href="@{/recipes/add/}" class="link-secondary">Add new recipe</a>
-            </p>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Recipe name</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="recipe, iter:${recipes}">
-                    <th scope="row" th:text="${iter.index} + 1">1</th>
-                    <td th:text="${recipe.name}"></td>
-                    <td>
-                        <a class="btn btn-outline-secondary" th:href="@{/recipes/edit/{id}(id=${recipe.id})}"> Edit </a>
-                        <a class="btn btn-outline-danger" th:href="@{/recipes/delete/{id}(id=${recipe.id})}"> Delete </a>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <h2>Recipes list</h2>
+    <p>
+        <a th:href="@{/recipes/add/}" class="link-secondary">Add new recipe</a>
+        <a th:href="@{/login}" class="link-secondary">Login to enable all</a>
+
+    </p>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Recipe name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="recipe, iter:${recipes}">
+            <th scope="row" th:text="${iter.index} + 1">1</th>
+            <td th:text="${recipe.name}"></td>
+            <td>
+                <a class="btn btn-outline-secondary" th:href="@{/recipes/edit/{id}(id=${recipe.id})}"> Edit </a>
+                <a class="btn btn-outline-danger" th:href="@{/recipes/delete/{id}(id=${recipe.id})}"> Delete </a>
+                <span th:if="${user != null}">
                         <a class="btn btn-outline-dark"
                            th:href="@{/recipes/{id}/addToShoppingList (id=${recipe.id})}"> Add to shopping list </a>
+                </span>
+                <span th:unless="${user != null}">
+                    <a class="btn btn-outline-secondary" href="/login"> Login </a>
+                </span>
 
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </body>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
 </html>

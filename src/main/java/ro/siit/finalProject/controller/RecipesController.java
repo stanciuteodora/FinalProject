@@ -1,14 +1,13 @@
 package ro.siit.finalProject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
-import ro.siit.finalProject.model.Ingredient;
-import ro.siit.finalProject.model.Recipe;
-import ro.siit.finalProject.model.RecipeItem;
-import ro.siit.finalProject.model.ShoppingList;
+import ro.siit.finalProject.model.*;
 import ro.siit.finalProject.service.IngredientsService;
 import ro.siit.finalProject.service.RecipeService;
 import ro.siit.finalProject.service.ShoppingListsService;
@@ -31,7 +30,17 @@ public class RecipesController {
     public String getRecipes(Model model) {
         List<Recipe> recipes = recipeService.getRecipesList();
         model.addAttribute("recipes", recipes);
+        model.addAttribute("user", getCurrentUser());
         return "recipes/list";
+    }
+
+    private User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getUser();
+        } else {
+            return null;
+        }
     }
 
     @GetMapping("/add")

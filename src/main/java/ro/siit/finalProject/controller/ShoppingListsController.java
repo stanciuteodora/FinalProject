@@ -23,9 +23,6 @@ public class ShoppingListsController {
     @Autowired
     private IngredientsService ingredientsService;
 
-
-
-
     @GetMapping("/")
     public String getShoppingLists(Model model) {
         List<ShoppingList> shoppingLists = shoppingListsService.getShoppingListsForCurrentUser();

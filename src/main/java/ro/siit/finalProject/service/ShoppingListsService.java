@@ -26,8 +26,8 @@ public class ShoppingListsService {
     }
 
     public List<ShoppingList> getShoppingListsForCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = ((CustomUserDetails) authentication.getPrincipal()).getUser();
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = principal.getUser();
         return jpaShoppingListRepository.findAllShoppingListsByUser(user);
     }
 
