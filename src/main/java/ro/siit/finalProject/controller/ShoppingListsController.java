@@ -45,7 +45,6 @@ public class ShoppingListsController {
         return new RedirectView("/shoppingLists/");
     }
 
-
     @GetMapping("/edit/{id}")
     public String getShoppingListEditForm(Model model, @PathVariable("id") UUID shoppingListId) {
         model.addAttribute("shopping_list", shoppingListsService.getShoppingListById(shoppingListId));
@@ -87,15 +86,19 @@ public class ShoppingListsController {
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
-    @PostMapping("/")
-    // todo review
+    @PostMapping("/edit/{id}/updateItems")
     public RedirectView saveShoppingList(Model model,
-                                         @RequestParam("shoppingListItemId") UUID shoppingListItemId,
-                                         @RequestParam("shoppingListItemQuantity") Integer itemQuantity) {
-        ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItem(shoppingListItemId);
-        shoppingListItem.setQuantity(itemQuantity);
-        shoppingListsService.saveShoppingList(shoppingListItem.getShoppingList());
-        return new RedirectView("/shoppingLists/");
+                                         @PathVariable("id") UUID shoppingListId,
+                                         @RequestParam("shoppingListItemId") UUID[] shoppingListItemIds,
+                                         @RequestParam("shoppingListItemQuantity") Integer[] itemQuantities) {
+        for (int i = 0; i < shoppingListItemIds.length; i++) {
+            UUID shoppingListItemId = shoppingListItemIds[i];
+            Integer itemQuantity = itemQuantities[i];
+            ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItem(shoppingListItemId);
+            shoppingListItem.setQuantity(itemQuantity);
+            shoppingListsService.saveShoppingList(shoppingListItem.getShoppingList());
+        }
+        return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
     @PostMapping("/{id}/addToShoppingList")
