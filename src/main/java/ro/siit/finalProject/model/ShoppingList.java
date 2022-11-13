@@ -21,6 +21,7 @@ public class ShoppingList {
     private Boolean favorite = false;
 
     public ShoppingList() {
+        this.items = new ArrayList<>();
     }
 
     public ShoppingList(UUID id, String name, Boolean favorite) {

@@ -36,34 +36,30 @@ public class ShoppingListsService {
         jpaShoppingListRepository.saveAndFlush(shoppingList);
     }
 
-    public void addRecipeItemsToShoppingList(UUID shoppingListId, UUID recipeId) {
-        Recipe recipeById = recipesService.getRecipeById(recipeId);
-        ShoppingList shoppingListById = jpaShoppingListRepository.findById(shoppingListId).get();
-        for (RecipeItem item : recipeById.getItems()) {
-            saveShoppingListItem(shoppingListById.getId(), item.getIngredient().getId(), item.getQuantity());
+    public void addRecipeItemsToShoppingList(UUID shoppingListId,
+                                             UUID recipeId) {
+        Recipe recipe = recipesService.getRecipeById(recipeId);
+        ShoppingList shoppingList = getShoppingListById(shoppingListId);
+
+        for (RecipeItem recipeItem : recipe.getItems()) {
+            ShoppingListItem shoppingListItem = createShoppingListItem(
+                    recipeItem.getQuantity(),
+                    recipeItem.getIngredient(),
+                    shoppingList);
+            addItemGivenMatch(shoppingListItem, findMatchingShoppingListItem(shoppingList, recipeItem));
         }
     }
 
-    public void saveShoppingListItem(UUID shoppingListId, UUID ingredientId, Integer shoppingListItemQuantity) {
-        Ingredient ingredientById = ingredientsService.getIngredientById(ingredientId);
-        ShoppingList shoppingListById = getShoppingListById(shoppingListId);
-        ShoppingListItem shoppingListItem = createShoppingListItem(shoppingListItemQuantity, ingredientById, shoppingListById);
-        saveShoppingListItem(shoppingListItem);
-    }
-
-    public void saveShoppingListItem(ShoppingListItem shoppingListItem) {
-        boolean ifPresent = true;
-        for (ShoppingListItem itemOnTheList : jpaShoppingListItemRepository.findAll()) {
-            if (itemOnTheList.getIngredient().getId().equals(shoppingListItem.getIngredient().getId())
-                    && itemOnTheList.getShoppingList().getId().equals(shoppingListItem.getShoppingList().getId())) {
-                itemOnTheList.setQuantity(shoppingListItem.getQuantity() + itemOnTheList.getQuantity());
-                jpaShoppingListItemRepository.saveAndFlush(itemOnTheList);
-                ifPresent = false;
-            }
-        }
-        if (ifPresent) {
-            jpaShoppingListItemRepository.saveAndFlush(shoppingListItem);
-        }
+    public void addShoppingListItemsToShoppingList(UUID shoppingListId,
+                                                   UUID ingredientId,
+                                                   Integer shoppingListItemQuantity) {
+        Ingredient ingredient = ingredientsService.getIngredientById(ingredientId);
+        ShoppingList shoppingList = this.getShoppingListById(shoppingListId);
+        ShoppingListItem itemFromUi = createShoppingListItem(
+                shoppingListItemQuantity,
+                ingredient,
+                shoppingList);
+        addItemGivenMatch(itemFromUi, findMatchingShoppingListItem(itemFromUi));
     }
 
     public List<ShoppingList> getShoppingLists() {
@@ -110,7 +106,9 @@ public class ShoppingListsService {
         jpaShoppingListItemRepository.deleteById(itemId);
     }
 
-    private ShoppingListItem createShoppingListItem(Integer shoppingListItemQuantity, Ingredient ingredientById, ShoppingList shoppingListById) {
+    private ShoppingListItem createShoppingListItem(Integer shoppingListItemQuantity,
+                                                    Ingredient ingredientById,
+                                                    ShoppingList shoppingListById) {
         ShoppingListItem shoppingListItem = new ShoppingListItem();
         shoppingListItem.setId(UUID.randomUUID());
         shoppingListItem.setIngredient(ingredientById);
@@ -119,6 +117,29 @@ public class ShoppingListsService {
         return shoppingListItem;
     }
 
+    private ShoppingListItem findMatchingShoppingListItem(ShoppingListItem itemFromUi) {
+        return jpaShoppingListItemRepository.findMatchingItems(
+                itemFromUi.getShoppingList().getId(),
+                itemFromUi.getIngredient().getId());
+    }
+
+    private ShoppingListItem findMatchingShoppingListItem(ShoppingList shoppingList, RecipeItem recipeItem) {
+        for (ShoppingListItem itemFromSl : shoppingList.getItems()) {
+            if (itemFromSl.getIngredient().getId().equals(recipeItem.getIngredient().getId())) {
+                return itemFromSl;
+            }
+        }
+        return null;
+    }
+
+    private void addItemGivenMatch(ShoppingListItem itemFromUi, ShoppingListItem matchFromDb) {
+        if (matchFromDb != null) {
+            matchFromDb.setQuantity(itemFromUi.getQuantity() + matchFromDb.getQuantity());
+            jpaShoppingListItemRepository.saveAndFlush(matchFromDb);
+        } else {
+            jpaShoppingListItemRepository.saveAndFlush(itemFromUi);
+        }
+    }
 }
 
 

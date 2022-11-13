@@ -8,9 +8,11 @@ import java.util.UUID;
 public class ShoppingListItem {
     @Id
     private UUID id;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
+
     private Integer quantity;
 
     @ManyToOne

@@ -10,7 +10,6 @@ import ro.siit.finalProject.service.IngredientsService;
 import ro.siit.finalProject.service.ShoppingListsService;
 import ro.siit.finalProject.service.SortMethod;
 
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -27,10 +26,6 @@ public class ShoppingListsController {
                                    @RequestParam(name = "sort", required = false) String sortMethod) {
         model.addAttribute("shopping_lists", shoppingListsService.getShoppingListsForCurrentUser(translateSortMethod(sortMethod)));
         return "shoppingLists/list";
-    }
-
-    private SortMethod translateSortMethod(String sortMethod) {
-        return SortMethod.getValue(sortMethod);
     }
 
     @GetMapping("/add")
@@ -68,8 +63,8 @@ public class ShoppingListsController {
     public RedirectView addShoppingListItem(Model model,
                                             @RequestParam("shoppingListId") UUID shoppingListId,
                                             @RequestParam("ingredientId") UUID ingredientId,
-                                            @RequestParam("shoppingListItemQuantity") Integer shoppingListItemQuantity) {
-        shoppingListsService.saveShoppingListItem(shoppingListId, ingredientId, shoppingListItemQuantity);
+                                            @RequestParam("shoppingListItemQuantity") String shoppingListItemQuantity) {
+        shoppingListsService.addShoppingListItemsToShoppingList(shoppingListId, ingredientId, Integer.valueOf(shoppingListItemQuantity));
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
@@ -113,6 +108,10 @@ public class ShoppingListsController {
 
     private Boolean translateCheckboxValue(String string) {
         return "on".equals(string);
+    }
+
+    private SortMethod translateSortMethod(String sortMethod) {
+        return SortMethod.getValue(sortMethod);
     }
 
 }
