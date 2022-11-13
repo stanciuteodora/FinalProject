@@ -84,15 +84,25 @@ public class RecipesController {
         return new RedirectView("/recipes/edit/" + recipeId);
     }
 
-    @PostMapping("/")
-    // todo review
+    @PostMapping("/edit/{id}/updateItems")
     public RedirectView saveRecipeItem(Model model,
-                                       @RequestParam("recipeItemId") UUID recipeItemId,
-                                       @RequestParam("recipeItemQuantity") Integer itemQuantity) {
-        RecipeItem recipeItem = recipesService.getRecipeItem(recipeItemId);
-        recipeItem.setQuantity(itemQuantity);
-        recipesService.saveRecipe(recipeItem.getRecipe());
-        return new RedirectView("/recipes/");
+                                       @PathVariable("id") UUID recipeId,
+                                       @RequestParam(name = "recipeItemId", required = false) UUID[] recipeItemIds,
+                                       @RequestParam(name = "recipeItemQuantity", required = false) Integer[] itemQuantities) {
+        if (recipeItemIds == null || itemQuantities == null) {
+            return new RedirectView("/recipes/edit/" + recipeId);
+        }
+        updateItemQuantities(recipeItemIds, itemQuantities);
+        return new RedirectView("/recipes/edit/" + recipeId);
+    }
+
+    //todo move to service
+    private void updateItemQuantities(UUID[] recipeItemIds, Integer[] itemQuantities) {
+        for (int i = 0; i < recipeItemIds.length; i++) {
+            RecipeItem recipeItem = recipesService.getRecipeItem(recipeItemIds[i]);
+            recipeItem.setQuantity(itemQuantities[i]);
+            recipesService.saveRecipe(recipeItem.getRecipe());
+        }
     }
 
     @GetMapping("/{id}/addToShoppingList")
