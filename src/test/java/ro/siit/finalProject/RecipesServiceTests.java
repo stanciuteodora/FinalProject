@@ -8,13 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ro.siit.finalProject.model.Ingredient;
-import ro.siit.finalProject.model.Recipe;
-import ro.siit.finalProject.model.RecipeItem;
+import ro.siit.finalProject.model.*;
 
 import ro.siit.finalProject.repository.JpaRecipeItemsRepository;
 import ro.siit.finalProject.repository.JpaRecipeRepository;
 
+import ro.siit.finalProject.service.IngredientsService;
 import ro.siit.finalProject.service.RecipesService;
 
 import java.util.*;
@@ -23,108 +22,58 @@ import java.util.*;
 public class RecipesServiceTests {
     @InjectMocks
     private RecipesService recipesService;
-
     @Mock
     private JpaRecipeRepository jpaRecipeRepository;
-
     @Mock
     private JpaRecipeItemsRepository jpaRecipeItemsRepository;
-
+    @Mock
+    private IngredientsService ingredientsService;
     @Test
-    void saveRecipeItemHappyTest() {
+    void addItem_ingredientAlreadyInList() {
         // test data preparation
         Ingredient ingredient = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
         Recipe recipe = createEmptyRecipe(UUID.randomUUID(), "reteta");
         RecipeItem recipeItemFromUi = createRecipeItem(UUID.randomUUID(), ingredient, 5, recipe);
         RecipeItem recipeItemFromDb = createRecipeItem(UUID.randomUUID(), ingredient, 2, recipe);
-        when(jpaRecipeItemsRepository.findAll()).thenReturn(List.of(recipeItemFromDb));
+
+        when(ingredientsService.getIngredientById(ingredient.getId())).thenReturn(ingredient);
+        when(jpaRecipeRepository.findById(recipe.getId())).thenReturn(Optional.of(recipe));
+        when(jpaRecipeItemsRepository.findMatchingItems(recipe.getId(), ingredient.getId())).thenReturn(recipeItemFromDb);
+        when(jpaRecipeItemsRepository.saveAndFlush(recipeItemFromDb)).thenReturn(recipeItemFromDb);
 
         // test execution
-        recipesService.saveRecipeItem(recipeItemFromUi);
-
+        recipesService.addRecipeItemsToRecipe(
+                recipe.getId(),
+                ingredient.getId(),
+                recipeItemFromUi.getQuantity());
         // assertions
         assertThat(recipeItemFromDb.getQuantity()).isEqualTo(7);
         verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(recipeItemFromDb);
     }
-
     @Test
-    void saveRecipeItemManyItemsOnTheRecipeHappyTest() {
-        // test data preparation
-        Ingredient ingredient = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
-        Ingredient ingredient2 = createIngredient(UUID.randomUUID(), "lemons", "kg");
-        Recipe recipe = createEmptyRecipe(UUID.randomUUID(), "reteta");
-        RecipeItem recipeItemFromUi = createRecipeItem(UUID.randomUUID(), ingredient, 5, recipe);
-        RecipeItem recipeItemFromDb = new RecipeItem(UUID.randomUUID(), ingredient, 2);
-        RecipeItem recipeItem2FromDb = new RecipeItem(UUID.randomUUID(), ingredient2, 4);
-        recipeItemFromDb.setRecipe(recipe);
-        when(jpaRecipeItemsRepository.findAll()).thenReturn(List.of(recipeItemFromDb, recipeItem2FromDb));
-
-        // test execution
-        recipesService.saveRecipeItem(recipeItemFromUi);
-
-        // assertions
-        assertThat(recipeItemFromDb.getQuantity()).isEqualTo(7);
-        assertThat(recipeItem2FromDb.getQuantity()).isEqualTo(4);
-        verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(recipeItemFromDb);
-        verify(jpaRecipeItemsRepository, times(0)).saveAndFlush(recipeItem2FromDb);
-    }
-
-    @Test
-    void saveRecipeItemDifferentIngredientsTest() {
+    void addItem_ingredientNotInList() {
         // test data preparation
         Ingredient ingredientFromUi = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
         Ingredient ingredientFromDb = createIngredient(UUID.randomUUID(), "varza", "pieces");
-        Recipe recipe = createEmptyRecipe(UUID.randomUUID(), "reteta");
-        RecipeItem recipeItemFromUi = createRecipeItem(UUID.randomUUID(), ingredientFromUi, 5, recipe);
-        RecipeItem recipeItemFromDb = createRecipeItem(UUID.randomUUID(), ingredientFromDb, 2, recipe);
+        Recipe shoppingList = createEmptyRecipe(UUID.randomUUID(), "lista");
+        RecipeItem shoppingListItemFromUi = createRecipeItem(UUID.randomUUID(), ingredientFromUi, 5, shoppingList);
+        RecipeItem shoppingListItemFromDb = createRecipeItem(UUID.randomUUID(), ingredientFromDb, 2, shoppingList);
 
-        when(jpaRecipeItemsRepository.findAll()).thenReturn(List.of(recipeItemFromDb));
-
-        // test execution
-        recipesService.saveRecipeItem(recipeItemFromUi);
-
-        // assertions
-        assertThat(recipeItemFromDb.getQuantity()).isEqualTo(2);
-        verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(recipeItemFromUi);
-    }
-
-    @Test
-    void saveRecipeItemDifferentRecipesTest() {
-        // test data preparation
-        Ingredient ingredient = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
-        Recipe recipeFromUi = createEmptyRecipe(UUID.randomUUID(), "recipe from ui");
-        Recipe recipeFromDb = createEmptyRecipe(UUID.randomUUID(), "recipe from db");
-        RecipeItem recipeItemFromUi = createRecipeItem(UUID.randomUUID(), ingredient, 5, recipeFromUi);
-        RecipeItem recipeItemFromDb = createRecipeItem(UUID.randomUUID(), ingredient, 2, recipeFromDb);
-
-        when(jpaRecipeItemsRepository.findAll()).thenReturn(List.of(recipeItemFromDb));
+        when(ingredientsService.getIngredientById(ingredientFromUi.getId())).thenReturn(ingredientFromUi);
+        when(jpaRecipeRepository.findById(shoppingList.getId())).thenReturn(Optional.of(shoppingList));
+        when(jpaRecipeItemsRepository.findMatchingItems(shoppingList.getId(), ingredientFromUi.getId())).thenReturn(null);
+        when(jpaRecipeItemsRepository.saveAndFlush(any())).thenReturn(shoppingListItemFromUi);
 
         // test execution
-        recipesService.saveRecipeItem(recipeItemFromUi);
+        recipesService.addRecipeItemsToRecipe(
+                shoppingList.getId(),
+                ingredientFromUi.getId(),
+                shoppingListItemFromUi.getQuantity());
 
         // assertions
-        assertThat(recipeItemFromDb.getQuantity()).isEqualTo(2);
-        verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(recipeItemFromUi);
-    }
-
-    @Test
-    void saveRecipeItemDifferentIngredientsRecipesTest() {
-        // test data preparation
-        Ingredient ingredientFromUi = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
-        Ingredient ingredientFromDb = createIngredient(UUID.randomUUID(), "ice cream", "bucket");
-        Recipe recipeFromUi = createEmptyRecipe(UUID.randomUUID(), "recipe from ui");
-        Recipe recipeFromDb = createEmptyRecipe(UUID.randomUUID(), "recipe from db");
-        RecipeItem recipeItemFromUi = createRecipeItem(UUID.randomUUID(), ingredientFromUi, 5, recipeFromUi);
-        RecipeItem recipeItemFromDb = createRecipeItem(UUID.randomUUID(), ingredientFromDb, 2, recipeFromDb);
-
-        when(jpaRecipeItemsRepository.findAll()).thenReturn(List.of(recipeItemFromDb));
-
-        // test execution
-        recipesService.saveRecipeItem(recipeItemFromUi);
-
-        // assertions
-        assertThat(recipeItemFromDb.getQuantity()).isEqualTo(2);
-        verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(recipeItemFromUi);
+        assertThat(shoppingListItemFromDb.getQuantity()).isEqualTo(2);
+        verify(jpaRecipeItemsRepository, times(0)).saveAndFlush(shoppingListItemFromDb);
+        verify(jpaRecipeItemsRepository, times(1)).saveAndFlush(any());
     }
 
     @Test

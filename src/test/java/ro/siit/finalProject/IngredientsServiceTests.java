@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ro.siit.finalProject.model.Ingredient;
+import ro.siit.finalProject.model.Recipe;
 import ro.siit.finalProject.repository.JpaIngredientRepository;
 import ro.siit.finalProject.service.IngredientsService;
 
@@ -61,6 +62,22 @@ public class IngredientsServiceTests {
 
         // assertions
         assertThat(actual).isEqualTo(ingredient);
+    }
+    @Test
+    void updateIngredientTest(){
+        // test data preparation
+        UUID ingredientId = UUID.randomUUID();
+        Ingredient ingredientFromDb = new Ingredient(ingredientId, "ice cream", "container");
+        Ingredient ingredientNewVersion = new Ingredient(ingredientId, "inghetata", "container");
+
+        when(jpaIngredientRepository.findById(ingredientFromDb.getId())).thenReturn(Optional.of(ingredientFromDb)).thenReturn(Optional.of(ingredientNewVersion));
+        when(jpaIngredientRepository.saveAndFlush(ingredientNewVersion)).thenReturn(ingredientNewVersion);
+
+        // test execution &  assertions
+        assertThat(jpaIngredientRepository.findById(ingredientId).get().getName()).isEqualTo(ingredientFromDb.getName());
+        ingredientsService.updateIngredient(ingredientFromDb.getId(), ingredientFromDb);
+        assertThat(jpaIngredientRepository.findById(ingredientId).get().getName()).isEqualTo(ingredientNewVersion.getName());
+
     }
 
     @Test

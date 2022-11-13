@@ -2,9 +2,7 @@ package ro.siit.finalProject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.siit.finalProject.model.Ingredient;
-import ro.siit.finalProject.model.Recipe;
-import ro.siit.finalProject.model.RecipeItem;
+import ro.siit.finalProject.model.*;
 import ro.siit.finalProject.repository.JpaRecipeItemsRepository;
 import ro.siit.finalProject.repository.JpaRecipeRepository;
 
@@ -24,7 +22,7 @@ public class RecipesService {
         jpaRecipeRepository.saveAndFlush(recipe);
     }
 
-    public void saveRecipeItem(RecipeItem recipeItem) {
+    public void addRecipeItemsToRecipe(RecipeItem recipeItem) {
         Boolean ifPresent = true;
         for (RecipeItem itemOnTheList : jpaRecipeItemsRepository.findAll()) {
             if (itemOnTheList.getIngredient().getId().equals(recipeItem.getIngredient().getId())
@@ -39,20 +37,17 @@ public class RecipesService {
         }
     }
 
-    public void saveRecipeItem(UUID recipeId, UUID ingredientId, Integer itemQuantity) {
-        Ingredient ingredientById = ingredientsService.getIngredientById(ingredientId);
-        Recipe recipeById = getRecipeById(recipeId);
-        RecipeItem recipeItem = createRecipeItem(itemQuantity, ingredientById, recipeById);
-        saveRecipeItem(recipeItem);
-    }
+    public void addRecipeItemsToRecipe(UUID recipeId,
+                                       UUID ingredientId,
+                                       Integer itemQuantity) {
+        Ingredient ingredient = ingredientsService.getIngredientById(ingredientId);
+        Recipe recipe = this.getRecipeById(recipeId);
+        RecipeItem itemFromUi = createRecipeItem(
+                itemQuantity,
+                ingredient,
+                recipe);
+        addItemGivenMatch(itemFromUi, findMatchingRecipeItem(itemFromUi));
 
-    private RecipeItem createRecipeItem(Integer itemQuantity, Ingredient ingredientById, Recipe recipeById) {
-        RecipeItem recipeItem = new RecipeItem();
-        recipeItem.setId(UUID.randomUUID());
-        recipeItem.setIngredient(ingredientById);
-        recipeItem.setQuantity(itemQuantity);
-        recipeItem.setRecipe(recipeById);
-        return recipeItem;
     }
 
     public List<Recipe> getRecipes() {
@@ -79,6 +74,30 @@ public class RecipesService {
 
     public void deleteRecipeItem(UUID id) {
         jpaRecipeItemsRepository.deleteById(id);
+    }
+
+    private RecipeItem createRecipeItem(Integer itemQuantity, Ingredient ingredientById, Recipe recipeById) {
+        RecipeItem recipeItem = new RecipeItem();
+        recipeItem.setId(UUID.randomUUID());
+        recipeItem.setIngredient(ingredientById);
+        recipeItem.setQuantity(itemQuantity);
+        recipeItem.setRecipe(recipeById);
+        return recipeItem;
+    }
+
+    private RecipeItem findMatchingRecipeItem(RecipeItem itemFromUi) {
+        return jpaRecipeItemsRepository.findMatchingItems(
+                itemFromUi.getRecipe().getId(),
+                itemFromUi.getIngredient().getId());
+    }
+
+    private void addItemGivenMatch(RecipeItem itemFromUi, RecipeItem matchFromDb) {
+        if (matchFromDb != null) {
+            matchFromDb.setQuantity(itemFromUi.getQuantity() + matchFromDb.getQuantity());
+            jpaRecipeItemsRepository.saveAndFlush(matchFromDb);
+        } else {
+            jpaRecipeItemsRepository.saveAndFlush(itemFromUi);
+        }
     }
 }
 

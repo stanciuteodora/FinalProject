@@ -65,7 +65,7 @@ public class RecipesController {
                                       @RequestParam("recipeId") UUID recipeId,
                                       @RequestParam("ingredientId") UUID ingredientId,
                                       @RequestParam("recipeItemQuantity") Integer itemQuantity) {
-        recipesService.saveRecipeItem(recipeId, ingredientId, itemQuantity);
+        recipesService.addRecipeItemsToRecipe(recipeId, ingredientId, itemQuantity);
         return new RedirectView("/recipes/edit/" + recipeId);
     }
 

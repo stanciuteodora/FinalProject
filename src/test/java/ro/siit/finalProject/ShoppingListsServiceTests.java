@@ -23,7 +23,6 @@ import static org.mockito.Mockito.*;
 public class ShoppingListsServiceTests {
     @InjectMocks
     private ShoppingListsService shoppingListsService;
-
     @Mock
     private RecipesService recipesService;
     @Mock
@@ -88,7 +87,7 @@ public class ShoppingListsServiceTests {
     }
 
     @Test
-    void addRecipeItems_ingredientAlreadyInList(){
+    void addRecipeItems_ingredientAlreadyInList() {
         // test data preparation
         Ingredient ingredient = createIngredient(UUID.randomUUID(), "almonds", "kg");
         ShoppingList shoppingList = createEmptyShoppingList(UUID.randomUUID(), "lista");
@@ -112,6 +111,7 @@ public class ShoppingListsServiceTests {
 
 
     }
+
     @Test
     void addRecipeItems_ingredientNotInList() {
         // test data preparation
