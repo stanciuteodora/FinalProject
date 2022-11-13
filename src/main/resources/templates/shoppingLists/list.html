@@ -13,41 +13,43 @@
             crossorigin="anonymous"></script>
 
 </head>
-    <body>
-        <div th:replace="~{fragments/navbar :: navbar}"></div>
-        <div class="container">
-            <h2>Shopping lists list</h2>
-            <p>
-                <a th:href="@{/shoppingLists/add/}" class="link-secondary">Add new shopping list</a>
-            </p>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">
-                            <a th:href = "@{/shoppingLists/?sort=name}" >Shopping list name</a>
-                        </th>
-                        <th scope="col">
-                            <a th:href = "@{/shoppingLists/?sort=favorite}" >Favorite</a>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="shopping_list, iter:${shopping_lists}">
-                        <th scope="row" th:text="${iter.index} + 1">1</th>
-                        <td th:text="${shopping_list.name}"></td>
-                        <td>
-                            <span th:if="${shopping_list.favorite}">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </span>
-                        </td>
-                        <td>
-                            <a class="btn btn-outline-secondary" th:href="@{/shoppingLists/edit/{id}(id=${shopping_list.id})}"> View </a>
-                            <a class="btn btn-outline-danger" th:href="@{/shoppingLists/delete/{id}(id=${shopping_list.id})}"> Delete </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </body>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <h2>Shopping lists list</h2>
+    <p>
+        <a th:href="@{/shoppingLists/add/}" class="link-secondary">Add new shopping list</a>
+    </p>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">
+                <a th:href="@{/shoppingLists/?sort=name}">Shopping list name</a>
+            </th>
+            <th scope="col">
+                <a th:href="@{/shoppingLists/?sort=favorite}">Favorite</a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="shopping_list, iter:${shopping_lists}">
+            <th scope="row" th:text="${iter.index} + 1">1</th>
+            <td th:text="${shopping_list.name}"></td>
+            <td>
+                <span th:if="${shopping_list.favorite}">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </span>
+            </td>
+            <td>
+                <a class="btn btn-outline-secondary" th:href="@{/shoppingLists/edit/{id}(id=${shopping_list.id})}">
+                    View </a>
+                <a class="btn btn-outline-danger" th:href="@{/shoppingLists/delete/{id}(id=${shopping_list.id})}">
+                    Delete </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
 </html>
