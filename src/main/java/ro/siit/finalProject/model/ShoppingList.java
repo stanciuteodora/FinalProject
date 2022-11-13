@@ -1,6 +1,7 @@
 package ro.siit.finalProject.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,16 @@ public class ShoppingList {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private Boolean favorite;
+
     public ShoppingList() {
+    }
+
+    public ShoppingList(UUID id, String name, Boolean favorite) {
+        this.id = id;
+        this.name = name;
+        this.favorite = favorite;
+        this.items = new ArrayList<>();
     }
 
     public UUID getId() {
@@ -53,4 +63,11 @@ public class ShoppingList {
         this.user = user;
     }
 
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
+    }
 }

@@ -19,6 +19,12 @@ public class RecipeItem {
     public RecipeItem() {
     }
 
+    public RecipeItem(UUID id, Ingredient ingredient, Integer quantity) {
+        this.id = id;
+        this.ingredient = ingredient;
+        this.quantity = quantity;
+    }
+
     public UUID getId() {
         return id;
     }

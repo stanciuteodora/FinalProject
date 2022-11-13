@@ -18,7 +18,7 @@
     <h2>Recipes list</h2>
     <p>
         <a th:href="@{/recipes/add/}" class="link-secondary">Add new recipe</a>
-        <a th:href="@{/login}" class="link-secondary">Login to enable all</a>
+<!--        <a th:href="@{/login}" class="link-secondary">Login to enable all</a>-->
 
     </p>
     <table class="table table-striped">
@@ -33,7 +33,7 @@
             <th scope="row" th:text="${iter.index} + 1">1</th>
             <td th:text="${recipe.name}"></td>
             <td>
-                <a class="btn btn-outline-secondary" th:href="@{/recipes/edit/{id}(id=${recipe.id})}"> Edit </a>
+                <a class="btn btn-outline-secondary" th:href="@{/recipes/edit/{id}(id=${recipe.id})}"> View </a>
                 <a class="btn btn-outline-danger" th:href="@{/recipes/delete/{id}(id=${recipe.id})}"> Delete </a>
                 <span th:if="${user != null}">
                         <a class="btn btn-outline-dark"

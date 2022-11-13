@@ -6,7 +6,6 @@ import ro.siit.finalProject.model.Ingredient;
 import ro.siit.finalProject.repository.JpaIngredientRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -14,31 +13,26 @@ public class IngredientsService {
     @Autowired
     private JpaIngredientRepository jpaIngredientRepository;
 
+    public void saveIngredient(Ingredient ingredient) {
+        jpaIngredientRepository.saveAndFlush(ingredient);
+    }
+
     public List<Ingredient> getIngredients() {
         return jpaIngredientRepository.findAll();
     }
 
-    public void addIngredient(Ingredient ingredient) {
-        jpaIngredientRepository.saveAndFlush(ingredient);
+    public Ingredient getIngredientById(UUID id) {
+        return jpaIngredientRepository.findById(id).get();
     }
 
-    public void addIngredient(String name, String unitOfMeasure) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setName(name);
-        ingredient.setUnitOfMeasure(unitOfMeasure);
-        addIngredient(ingredient);
+    public void updateIngredient(UUID id, Ingredient ingredientNewVersion) {
+        Ingredient ingredientFromDb = getIngredientById(id);
+        ingredientFromDb.setName(ingredientNewVersion.getName());
+        ingredientFromDb.setUnitOfMeasure(ingredientNewVersion.getUnitOfMeasure());
+        saveIngredient(ingredientFromDb);
     }
 
     public void deleteIngredient(UUID id) {
         jpaIngredientRepository.deleteById(id);
     }
-
-    public Optional<Ingredient> findIngredientById(UUID id) {
-        return jpaIngredientRepository.findById(id);
-    }
-
-    public void save(Ingredient ingredient) {
-        jpaIngredientRepository.save(ingredient);
-    }
-
 }

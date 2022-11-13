@@ -1,6 +1,7 @@
 package ro.siit.finalProject.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +15,12 @@ public class Recipe {
     private List<RecipeItem> items;
 
     public Recipe() {
+    }
+
+    public Recipe(UUID id, String name) {
+        this.id = id;
+        this.name = name;
+        this.items = new ArrayList<>();
     }
 
     public UUID getId() {

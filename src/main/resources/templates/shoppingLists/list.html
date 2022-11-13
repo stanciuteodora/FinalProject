@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-      <meta charset="UTF-8">
-      <title>Shopping lists list</title>
-      <!-- CSS only -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-      <!-- JavaScript Bundle with Popper -->
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping lists list</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous"></script>
 
-    </head>
+</head>
     <body>
         <div th:replace="~{fragments/navbar :: navbar}"></div>
         <div class="container">
@@ -20,7 +24,12 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Shopping list name</th>
+                        <th scope="col">
+                            <a th:href = "@{/shoppingLists/?sort=name}" >Shopping list name</a>
+                        </th>
+                        <th scope="col">
+                            <a th:href = "@{/shoppingLists/?sort=favorite}" >Favorite</a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,7 +37,12 @@
                         <th scope="row" th:text="${iter.index} + 1">1</th>
                         <td th:text="${shopping_list.name}"></td>
                         <td>
-                            <a class="btn btn-outline-secondary" th:href="@{/shoppingLists/edit/{id}(id=${shopping_list.id})}"> Edit </a>
+                            <span th:if="${shopping_list.favorite}">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-outline-secondary" th:href="@{/shoppingLists/edit/{id}(id=${shopping_list.id})}"> View </a>
                             <a class="btn btn-outline-danger" th:href="@{/shoppingLists/delete/{id}(id=${shopping_list.id})}"> Delete </a>
                         </td>
                     </tr>

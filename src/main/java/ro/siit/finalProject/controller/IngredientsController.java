@@ -9,19 +9,17 @@ import ro.siit.finalProject.model.Ingredient;
 import ro.siit.finalProject.service.IngredientsService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("ingredients")
-public class IngredientsListController {
+public class IngredientsController {
     @Autowired
     private IngredientsService ingredientsService;
 
     @GetMapping("/")
     public String getIngredients(Model model) {
-        List<Ingredient> ingredients = ingredientsService.getIngredients();
-        model.addAttribute("ingredients", ingredients);
+        model.addAttribute("ingredients", ingredientsService.getIngredients());
         return "ingredients/list";
     }
 
@@ -32,13 +30,9 @@ public class IngredientsListController {
 
     @PostMapping("/add")
     public RedirectView addIngredient(Model model,
-                                @RequestParam("ingredientName") String name,
-                                @RequestParam("ingredientUnitOfMeasure") String unitOfMeasure) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setId(UUID.randomUUID());
-        ingredient.setName(name);
-        ingredient.setUnitOfMeasure(unitOfMeasure);
-        ingredientsService.addIngredient(ingredient);
+                                      @RequestParam("ingredientName") String name,
+                                      @RequestParam("ingredientUnitOfMeasure") String unitOfMeasure) {
+        ingredientsService.saveIngredient(new Ingredient(UUID.randomUUID(), name, unitOfMeasure));
         return new RedirectView("/ingredients/");
     }
 
@@ -50,8 +44,7 @@ public class IngredientsListController {
 
     @GetMapping("/edit/{id}")
     public String getIngredientEditForm(Model model, @PathVariable("id") UUID id) {
-        Optional<Ingredient> ingredientToEdit = ingredientsService.findIngredientById(id);
-        model.addAttribute("ingredient", ingredientToEdit.get());
+        model.addAttribute("ingredient", ingredientsService.getIngredientById(id));
         return "ingredients/editForm";
     }
 
@@ -60,11 +53,7 @@ public class IngredientsListController {
                                        @RequestParam("ingredientId") UUID id,
                                        @RequestParam("ingredientName") String name,
                                        @RequestParam("ingredientUnitOfMeasure") String unitOfMeasure) {
-        Optional<Ingredient> ingredient = ingredientsService.findIngredientById(id);
-        ingredient.get().setName(name);
-        ingredient.get().setUnitOfMeasure(unitOfMeasure);
-        ingredientsService.save(ingredient.get());
+        ingredientsService.updateIngredient(id, new Ingredient(id, name, unitOfMeasure));
         return new RedirectView("/ingredients/");
     }
-
 }

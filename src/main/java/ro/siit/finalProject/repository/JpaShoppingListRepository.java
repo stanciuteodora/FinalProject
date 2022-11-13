@@ -12,4 +12,8 @@ import java.util.UUID;
 public interface JpaShoppingListRepository extends JpaRepository<ShoppingList, UUID> {
     @Query(value = "SELECT d FROM ShoppingList d WHERE d.user = :user")
     List<ShoppingList> findAllShoppingListsByUser(User user);
+    @Query(value = "SELECT d FROM ShoppingList d WHERE d.user = :user order by d.name")
+    List<ShoppingList> findByOrderByNameAsc(User user);
+    @Query(value = "SELECT d FROM ShoppingList d WHERE d.user = :user order by d.favorite desc")
+    List<ShoppingList> findByOrderByFavoriteDesc(User user);
 }

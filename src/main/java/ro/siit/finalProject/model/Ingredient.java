@@ -13,7 +13,6 @@ public class Ingredient {
     private String unitOfMeasure;
     @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
     private List<RecipeItem> recipeItems;
-
     @OneToMany(mappedBy = "shoppingList", fetch = FetchType.LAZY)
     private List<ShoppingListItem> shoppingListItems;
 
@@ -65,4 +64,40 @@ public class Ingredient {
     public void setShoppingListItems(List<ShoppingListItem> shoppingListItems) {
         this.shoppingListItems = shoppingListItems;
     }
+//
+//    @Override
+//    public String toString() {
+//        return "Ingredient{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", unitOfMeasure='" + unitOfMeasure + '\'' +
+//                ", recipeItems=" + recipeItems +
+//                ", shoppingListItems=" + shoppingListItems +
+//                '}';
+//    }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        Ingredient that = (Ingredient) o;
+//
+//        if (!id.equals(that.id)) return false;
+//        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+//        if (unitOfMeasure != null ? !unitOfMeasure.equals(that.unitOfMeasure) : that.unitOfMeasure != null)
+//            return false;
+//        if (recipeItems != null ? !recipeItems.equals(that.recipeItems) : that.recipeItems != null) return false;
+//        return shoppingListItems != null ? shoppingListItems.equals(that.shoppingListItems) : that.shoppingListItems == null;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = id.hashCode();
+//        result = 31 * result + (name != null ? name.hashCode() : 0);
+//        result = 31 * result + (unitOfMeasure != null ? unitOfMeasure.hashCode() : 0);
+//        result = 31 * result + (recipeItems != null ? recipeItems.hashCode() : 0);
+//        result = 31 * result + (shoppingListItems != null ? shoppingListItems.hashCode() : 0);
+//        return result;
+//    }
 }
