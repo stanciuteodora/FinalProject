@@ -94,6 +94,13 @@ public class ShoppingListsController {
         if (shoppingListItemIds == null || itemQuantities == null) {
             return new RedirectView("/shoppingLists/edit/" + shoppingListId);
         }
+
+        updateShoppingListItemQuantities(shoppingListItemIds, itemQuantities);
+        return new RedirectView("/shoppingLists/edit/" + shoppingListId);
+    }
+
+    // todo move to service
+    private void updateShoppingListItemQuantities(UUID[] shoppingListItemIds, Integer[] itemQuantities) {
         for (int i = 0; i < shoppingListItemIds.length; i++) {
             UUID shoppingListItemId = shoppingListItemIds[i];
             Integer itemQuantity = itemQuantities[i];
@@ -101,7 +108,6 @@ public class ShoppingListsController {
             shoppingListItem.setQuantity(itemQuantity);
             shoppingListsService.saveShoppingList(shoppingListItem.getShoppingList());
         }
-        return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
     @PostMapping("/{id}/addToShoppingList")
