@@ -1,20 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Teo's Application</title>
-        <!-- CSS only -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
-        <!-- JavaScript Bundle with Popper -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
-                crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <div th:replace="~{fragments/navbar :: navbar}"></div>
-        <div class="container">
-            <h1>Teo's App</h1>
+<head>
+    <meta charset="UTF-8">
+    <title>Teo's Application</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <h1>Teo's App</h1>
+    <div class="row row-cols-1 row-cols-md-3 text-center">
+
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="recipe.webp" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h5 class="card-title">Recipes</h5>
+                    <p class="card-text">You can find your favorite recipes in our application.</p>
+                    <a href="/recipes/" class="btn btn-primary">See Recipes</a>
+                </div>
+            </div>
         </div>
-    </body>
+
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="ingredient.jpeg" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h5 class="card-title">Ingredients</h5>
+                    <p class="card-text">Ingredients from all over the world can be found and managed here.</p>
+                    <a href="/ingredients/" class="btn btn-primary">Manage Ingredients</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img src="shopping-list.jpeg" class="card-img-top" alt="recipe">
+                <div class="card-body">
+                    <h5 class="card-title">Shopping Lists</h5>
+                    <p class="card-text">The greatest way to manage all your shopping lists and desires.</p>
+                    <a href="/shoppingLists/" class="btn btn-primary">See Recipes</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
 </html>
