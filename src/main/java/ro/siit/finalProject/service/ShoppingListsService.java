@@ -70,13 +70,13 @@ public class ShoppingListsService {
         return jpaShoppingListRepository.findAll();
     }
 
-    public List<ShoppingList> getShoppingListsForCurrentUser(String sortMethod) {
+    public List<ShoppingList> getShoppingListsForCurrentUser(SortMethod sortMethod) {
         CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = principal.getUser();
 
-        if ("name".equals(sortMethod)) {
+        if (SortMethod.name.equals(sortMethod)) {
             return jpaShoppingListRepository.findByOrderByNameAsc(user);
-        } else if ("favorite".equals(sortMethod)) {
+        } else if (SortMethod.favorite.equals(sortMethod)) {
             return jpaShoppingListRepository.findByOrderByFavoriteDesc(user);
         } else {
             return jpaShoppingListRepository.findAllShoppingListsByUser(user);
@@ -101,6 +101,7 @@ public class ShoppingListsService {
         shoppingList.setFavorite(shoppingListNewValue.getFavorite());
         saveShoppingList(shoppingList);
     }
+
     public void deleteShoppingList(UUID shoppingListId) {
         jpaShoppingListRepository.deleteById(shoppingListId);
     }

@@ -8,6 +8,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import ro.siit.finalProject.model.*;
 import ro.siit.finalProject.service.IngredientsService;
 import ro.siit.finalProject.service.ShoppingListsService;
+import ro.siit.finalProject.service.SortMethod;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +25,12 @@ public class ShoppingListsController {
     @GetMapping("/")
     public String getShoppingLists(Model model,
                                    @RequestParam(name = "sort", required = false) String sortMethod) {
-        model.addAttribute("shopping_lists", shoppingListsService.getShoppingListsForCurrentUser(sortMethod));
+        model.addAttribute("shopping_lists", shoppingListsService.getShoppingListsForCurrentUser(translateSortMethod(sortMethod)));
         return "shoppingLists/list";
+    }
+
+    private SortMethod translateSortMethod(String sortMethod) {
+        return SortMethod.getValue(sortMethod);
     }
 
     @GetMapping("/add")

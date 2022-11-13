@@ -18,7 +18,7 @@ public class ShoppingList {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Boolean favorite;
+    private Boolean favorite = false;
 
     public ShoppingList() {
     }
