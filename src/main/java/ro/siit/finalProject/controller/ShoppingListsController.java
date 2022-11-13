@@ -89,8 +89,11 @@ public class ShoppingListsController {
     @PostMapping("/edit/{id}/updateItems")
     public RedirectView saveShoppingList(Model model,
                                          @PathVariable("id") UUID shoppingListId,
-                                         @RequestParam("shoppingListItemId") UUID[] shoppingListItemIds,
-                                         @RequestParam("shoppingListItemQuantity") Integer[] itemQuantities) {
+                                         @RequestParam(name = "shoppingListItemId", required = false) UUID[] shoppingListItemIds,
+                                         @RequestParam(name = "shoppingListItemQuantity", required = false) Integer[] itemQuantities) {
+        if (shoppingListItemIds == null || itemQuantities == null) {
+            return new RedirectView("/shoppingLists/edit/" + shoppingListId);
+        }
         for (int i = 0; i < shoppingListItemIds.length; i++) {
             UUID shoppingListItemId = shoppingListItemIds[i];
             Integer itemQuantity = itemQuantities[i];
