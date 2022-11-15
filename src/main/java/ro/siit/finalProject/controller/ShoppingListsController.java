@@ -173,19 +173,8 @@ public class ShoppingListsController {
             return new RedirectView("/shoppingLists/edit/" + shoppingListId);
         }
 
-        updateShoppingListItemQuantities(shoppingListItemIds, itemQuantities);
+        shoppingListsService.updateShoppingListItemQuantities(shoppingListItemIds, itemQuantities);
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
-    }
-
-    // todo move to service
-    private void updateShoppingListItemQuantities(UUID[] shoppingListItemIds, Integer[] itemQuantities) {
-        for (int i = 0; i < shoppingListItemIds.length; i++) {
-            UUID shoppingListItemId = shoppingListItemIds[i];
-            Integer itemQuantity = itemQuantities[i];
-            ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItemById(shoppingListItemId);
-            shoppingListItem.setQuantity(itemQuantity);
-            shoppingListsService.saveShoppingList(shoppingListItem.getShoppingList());
-        }
     }
 
     /**

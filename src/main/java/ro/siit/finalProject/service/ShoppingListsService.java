@@ -153,6 +153,23 @@ public class ShoppingListsService {
         saveShoppingList(shoppingList);
     }
 
+
+    /**
+     * Update the quantities for the given ids
+     *
+     * @param shoppingListItemIds the shopping list items
+     * @param itemQuantities      the corresponding quantities
+     */
+    public void updateShoppingListItemQuantities(UUID[] shoppingListItemIds, Integer[] itemQuantities) {
+        for (int i = 0; i < shoppingListItemIds.length; i++) {
+            UUID shoppingListItemId = shoppingListItemIds[i];
+            Integer itemQuantity = itemQuantities[i];
+            ShoppingListItem shoppingListItem = getShoppingListItemById(shoppingListItemId);
+            shoppingListItem.setQuantity(itemQuantity);
+            saveShoppingList(shoppingListItem.getShoppingList());
+        }
+    }
+
     /**
      * Deletes a shopping list given its id.
      *

@@ -93,6 +93,20 @@ public class RecipesService {
     }
 
     /**
+     * Updates the quantities for recipe items
+     *
+     * @param recipeItemIds  the recipe items identifiers
+     * @param itemQuantities the corresponding quantities
+     */
+    public void updateItemQuantities(UUID[] recipeItemIds, Integer[] itemQuantities) {
+        for (int i = 0; i < recipeItemIds.length; i++) {
+            RecipeItem recipeItem = getRecipeItem(recipeItemIds[i]);
+            recipeItem.setQuantity(itemQuantities[i]);
+            saveRecipe(recipeItem.getRecipe());
+        }
+    }
+
+    /**
      * Deletes a recipe given its id.
      *
      * @param recipeId - the recipe id

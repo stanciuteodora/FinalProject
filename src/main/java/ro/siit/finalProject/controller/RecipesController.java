@@ -168,18 +168,10 @@ public class RecipesController {
         if (recipeItemIds == null || itemQuantities == null) {
             return new RedirectView("/recipes/edit/" + recipeId);
         }
-        updateItemQuantities(recipeItemIds, itemQuantities);
+        recipesService.updateItemQuantities(recipeItemIds, itemQuantities);
         return new RedirectView("/recipes/edit/" + recipeId);
     }
 
-    //todo move to service
-    private void updateItemQuantities(UUID[] recipeItemIds, Integer[] itemQuantities) {
-        for (int i = 0; i < recipeItemIds.length; i++) {
-            RecipeItem recipeItem = recipesService.getRecipeItem(recipeItemIds[i]);
-            recipeItem.setQuantity(itemQuantities[i]);
-            recipesService.saveRecipe(recipeItem.getRecipe());
-        }
-    }
 
     /**
      * The controller for viewing  the add recipes items to a shopping list form.
