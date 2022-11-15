@@ -3,6 +3,13 @@ package ro.siit.finalProject.model;
 import javax.persistence.*;
 import java.util.UUID;
 
+/**
+ * This is a shopping list item. It has 4 properties:
+ * The id of the item
+ * The ingredient of the item
+ * The quantity
+ * The shopping list
+ */
 @Entity
 @Table(name = "shopping_list_items")
 public class ShoppingListItem {
@@ -19,9 +26,19 @@ public class ShoppingListItem {
     @JoinColumn(name = "shopping_list_id", nullable = false)
     private ShoppingList shoppingList;
 
+    /**
+     * Creates a shopping list item.
+     */
     public ShoppingListItem() {
     }
 
+    /**
+     * Creates a shopping list item.
+     *
+     * @param id         - the id of the item
+     * @param ingredient - the ingredient of the item
+     * @param quantity   - the quantity of the item
+     */
     public ShoppingListItem(UUID id, Ingredient ingredient, Integer quantity) {
         this.id = id;
         this.ingredient = ingredient;

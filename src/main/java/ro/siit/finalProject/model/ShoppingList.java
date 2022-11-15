@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is a shopping list. It has 5 parameters:
+ * The id of the shopping list
+ * The name of the shopping list
+ * The list of items of a shopping list
+ * The user of the recipe
+ * The favorite option for the recipe
+ */
 @Entity
 @Table(name = "shopping_list")
 public class ShoppingList {
@@ -20,10 +28,20 @@ public class ShoppingList {
 
     private Boolean favorite = false;
 
+    /**
+     * Creates a shopping list.
+     */
     public ShoppingList() {
         this.items = new ArrayList<>();
     }
 
+    /**
+     * Creates a shopping list.
+     *
+     * @param id       - the id of the shopping list
+     * @param name     - the name of the shopping list
+     * @param favorite - the favorite option for the recipe
+     */
     public ShoppingList(UUID id, String name, Boolean favorite) {
         this.id = id;
         this.name = name;

@@ -12,6 +12,9 @@ import ro.siit.finalProject.service.SortMethod;
 
 import java.util.UUID;
 
+/**
+ * This is a controller for shopping lists.
+ */
 @Controller
 @RequestMapping("shoppingLists")
 public class ShoppingListsController {
@@ -21,6 +24,13 @@ public class ShoppingListsController {
     @Autowired
     private IngredientsService ingredientsService;
 
+    /**
+     * Controller for viewing the shopping lists.
+     *
+     * @param model      - the mvc model
+     * @param sortMethod - the sorting method for the list
+     * @return the path to the view
+     */
     @GetMapping("/")
     public String getShoppingLists(Model model,
                                    @RequestParam(name = "sort", required = false) String sortMethod) {
@@ -28,29 +38,63 @@ public class ShoppingListsController {
         return "shoppingLists/list";
     }
 
+    /**
+     * The controller for viewing the shopping list add form.
+     *
+     * @param model- the mvc model
+     * @return the shopping list add form path
+     */
     @GetMapping("/add")
     public String getShoppingListAddForm(Model model) {
         return "shoppingLists/addShoppingListForm";
     }
 
+    /**
+     * Adds a shopping list to the db.
+     *
+     * @param model- the mvc model
+     * @param name   - the name of the shopping list
+     * @return the redirect view to the shopping lists view
+     */
     @PostMapping("/add")
     public RedirectView addShoppingList(Model model, @RequestParam("name") String name) {
         shoppingListsService.saveShoppingList(name);
         return new RedirectView("/shoppingLists/");
     }
 
+    /**
+     * Deletes a shopping list from db.
+     *
+     * @param model-         the mvc model
+     * @param shoppingListId - the shopping list id
+     * @return the redirect view to the shopping lists view
+     */
     @GetMapping("/delete/{id}")
     public RedirectView deleteShoppingList(Model model, @PathVariable("id") UUID shoppingListId) {
         shoppingListsService.deleteShoppingList(shoppingListId);
         return new RedirectView("/shoppingLists/");
     }
 
+    /**
+     * The controller for viewing the shopping list edit form.
+     *
+     * @param model          - the mvc model
+     * @param shoppingListId - the shopping list id
+     * @return the shopping list edit form path
+     */
     @GetMapping("/edit/{id}")
     public String getShoppingListEditForm(Model model, @PathVariable("id") UUID shoppingListId) {
         model.addAttribute("shopping_list", shoppingListsService.getShoppingListById(shoppingListId));
         return "shoppingLists/editShoppingListForm";
     }
 
+    /**
+     * The controller for viewing the shopping list item add form.
+     *
+     * @param model          - the mvc model
+     * @param shoppingListId - the shopping list id
+     * @return the shopping list item add form path
+     */
     @GetMapping("/edit/{id}/addShoppingListItem")
     public String getShoppingListItemAddForm(Model model, @PathVariable("id") UUID shoppingListId) {
         model.addAttribute("ingredients", ingredientsService.getIngredients());
@@ -58,6 +102,15 @@ public class ShoppingListsController {
         return "/shoppingLists/addShoppingListItemForm";
     }
 
+    /**
+     * Adds an item to the shopping list.
+     *
+     * @param model                    - the mvc model
+     * @param shoppingListId           - the shopping list id
+     * @param ingredientId             - the item's ingredient id
+     * @param shoppingListItemQuantity - the item's quantity
+     * @return a redirect view to the shopping list
+     */
     @PostMapping("/edit/addShoppingListItem")
     public RedirectView addShoppingListItem(Model model,
                                             @RequestParam("shoppingListId") UUID shoppingListId,
@@ -67,6 +120,13 @@ public class ShoppingListsController {
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
+    /**
+     * Deletes a shopping list item from a shopping list.
+     *
+     * @param model-             the mvc model
+     * @param shoppingListItemId - the shopping list item id
+     * @return a redirect view to the shopping list
+     */
     @GetMapping("items/delete/{shopping_list_Item_Id}")
     public RedirectView deleteShoppingListItem(Model model, @PathVariable("shopping_list_Item_Id") UUID shoppingListItemId) {
         ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItemById(shoppingListItemId);
@@ -74,11 +134,20 @@ public class ShoppingListsController {
         return new RedirectView("/shoppingLists/edit/" + shoppingListItem.getShoppingList().getId());
     }
 
+    /**
+     * Updates the shopping list name and changes the favorite status.
+     *
+     * @param model-         the mvc model
+     * @param shoppingListId - the shopping list id
+     * @param name           - the name of the shopping list
+     * @param favorite       - the status (true/false) of the shopping list favorite option
+     * @return redirect view to the edit shopping list
+     */
     @PostMapping("/edit/{id}")
-    public RedirectView editRecipeName(Model model,
-                                       @RequestParam("shoppingListId") UUID shoppingListId,
-                                       @RequestParam("shoppingListName") String name,
-                                       @RequestParam(name = "favorite", required = false) String favorite) {
+    public RedirectView editShoppingListName(Model model,
+                                             @RequestParam("shoppingListId") UUID shoppingListId,
+                                             @RequestParam("shoppingListName") String name,
+                                             @RequestParam(name = "favorite", required = false) String favorite) {
         shoppingListsService.updateShoppingList(
                 shoppingListId,
                 new ShoppingList(shoppingListId, name, translateCheckboxValue(favorite))
@@ -86,6 +155,15 @@ public class ShoppingListsController {
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
 
+    /**
+     * Updates the shopping list items.
+     *
+     * @param model-               the mvc model
+     * @param shoppingListId       - the shopping list id
+     * @param shoppingListItemIds- the shopping list items ids
+     * @param itemQuantities       - the items quantities
+     * @return redirect view to the edit shopping list
+     */
     @PostMapping("/edit/{id}/updateItems")
     public RedirectView saveShoppingList(Model model,
                                          @PathVariable("id") UUID shoppingListId,
@@ -104,12 +182,20 @@ public class ShoppingListsController {
         for (int i = 0; i < shoppingListItemIds.length; i++) {
             UUID shoppingListItemId = shoppingListItemIds[i];
             Integer itemQuantity = itemQuantities[i];
-            ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItem(shoppingListItemId);
+            ShoppingListItem shoppingListItem = shoppingListsService.getShoppingListItemById(shoppingListItemId);
             shoppingListItem.setQuantity(itemQuantity);
             shoppingListsService.saveShoppingList(shoppingListItem.getShoppingList());
         }
     }
 
+    /**
+     * Adds recipe items to the shopping list.
+     *
+     * @param model-         the mvc model
+     * @param shoppingListId - - the shopping list id
+     * @param recipeId       - the recipe id
+     * @return a redirect view to the shopping lists
+     */
     @PostMapping("/{id}/addToShoppingList")
     public RedirectView addItemsToShoppingList(Model model,
                                                @RequestParam("shoppingListId") UUID shoppingListId,

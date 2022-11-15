@@ -1,5 +1,8 @@
 package ro.siit.finalProject.service;
 
+/**
+ * Enum value representing sort methods.
+ */
 public enum SortMethod {
     name("name"),
     favorite("favorite");

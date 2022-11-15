@@ -11,6 +11,9 @@ import ro.siit.finalProject.repository.JpaShoppingListRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is a service for manipulating the shopping lists
+ */
 @Service
 public class ShoppingListsService {
     @Autowired
@@ -22,10 +25,25 @@ public class ShoppingListsService {
     @Autowired
     private IngredientsService ingredientsService;
 
+    /**
+     * Saves a shopping list.
+     *
+     * @param shoppingList - the shopping list to be saved
+     */
     public void saveShoppingList(ShoppingList shoppingList) {
         jpaShoppingListRepository.saveAndFlush(shoppingList);
     }
 
+    /**
+     * Creates and saves a shopping list and links it to the current authenticated used.
+     * - identifier - generated
+     * - name - provided
+     * - user - the currently authenticated user
+     * - shopping list items - left empty
+     * - favorite - set to false
+     *
+     * @param name - the name of the shopping list
+     */
     public void saveShoppingList(String name) {
         ShoppingList shoppingList = new ShoppingList();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -36,6 +54,12 @@ public class ShoppingListsService {
         jpaShoppingListRepository.saveAndFlush(shoppingList);
     }
 
+    /**
+     * Adds the items of a recipe to the shopping list.
+     *
+     * @param shoppingListId - the shopping list id
+     * @param recipeId       - the recipe id
+     */
     public void addRecipeItemsToShoppingList(UUID shoppingListId,
                                              UUID recipeId) {
         Recipe recipe = recipesService.getRecipeById(recipeId);
@@ -50,6 +74,13 @@ public class ShoppingListsService {
         }
     }
 
+    /**
+     * Creates and saves an item to the shopping list.
+     *
+     * @param shoppingListId           - the shopping list id
+     * @param ingredientId             - the ingredient id
+     * @param shoppingListItemQuantity - the item quantity
+     */
     public void addShoppingListItemsToShoppingList(UUID shoppingListId,
                                                    UUID ingredientId,
                                                    Integer shoppingListItemQuantity) {
@@ -62,14 +93,24 @@ public class ShoppingListsService {
         addItemGivenMatch(itemFromUi, findMatchingShoppingListItem(itemFromUi));
     }
 
+    /**
+     * Gets all shopping lists.
+     *
+     * @return the shopping lists
+     */
     public List<ShoppingList> getShoppingLists() {
         return jpaShoppingListRepository.findAll();
     }
 
+    /**
+     * Gets shopping lists for current user.
+     *
+     * @param sortMethod - the criteria to be sorted on
+     * @return - the shopping lists
+     */
     public List<ShoppingList> getShoppingListsForCurrentUser(SortMethod sortMethod) {
         CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = principal.getUser();
-
         if (SortMethod.name.equals(sortMethod)) {
             return jpaShoppingListRepository.findByOrderByNameAsc(user);
         } else if (SortMethod.favorite.equals(sortMethod)) {
@@ -79,18 +120,32 @@ public class ShoppingListsService {
         }
     }
 
+    /**
+     * Gets a shopping list given its id.
+     *
+     * @param shoppingListId - the shopping list id
+     * @return the shopping list
+     */
     public ShoppingList getShoppingListById(UUID shoppingListId) {
         return jpaShoppingListRepository.findById(shoppingListId).get();
     }
 
+    /**
+     * Gets a shopping list item given its id.
+     *
+     * @param itemId - the item id
+     * @return the item of the shopping list
+     */
     public ShoppingListItem getShoppingListItemById(UUID itemId) {
         return jpaShoppingListItemRepository.findById(itemId).get();
     }
 
-    public ShoppingListItem getShoppingListItem(UUID shoppingListItemId) {
-        return jpaShoppingListItemRepository.findById(shoppingListItemId).get();
-    }
-
+    /**
+     * Updates a shopping list given its id and the new values.
+     *
+     * @param shoppingListId       - the shopping list id
+     * @param shoppingListNewValue - the updated shopping list
+     */
     public void updateShoppingList(UUID shoppingListId, ShoppingList shoppingListNewValue) {
         ShoppingList shoppingList = getShoppingListById(shoppingListId);
         shoppingList.setName(shoppingListNewValue.getName());
@@ -98,10 +153,20 @@ public class ShoppingListsService {
         saveShoppingList(shoppingList);
     }
 
+    /**
+     * Deletes a shopping list given its id.
+     *
+     * @param shoppingListId - the shopping list id
+     */
     public void deleteShoppingList(UUID shoppingListId) {
         jpaShoppingListRepository.deleteById(shoppingListId);
     }
 
+    /**
+     * Deletes a shopping list item given its id.
+     *
+     * @param itemId - the item id
+     */
     public void deleteShoppingListItemById(UUID itemId) {
         jpaShoppingListItemRepository.deleteById(itemId);
     }

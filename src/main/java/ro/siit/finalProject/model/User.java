@@ -4,6 +4,13 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is a user. It has 4 parameters.
+ * The id of the user
+ * The name of the user
+ * The password of the user
+ * The list of shopping lists of the user
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,6 +25,9 @@ public class User {
             cascade = CascadeType.ALL)
     private List<ShoppingList> shoppingLists;
 
+    /**
+     * Creates a user.
+     */
     public User() {
     }
 

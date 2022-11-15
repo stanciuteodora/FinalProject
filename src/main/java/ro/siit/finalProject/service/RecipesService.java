@@ -9,6 +9,9 @@ import ro.siit.finalProject.repository.JpaRecipeRepository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is a service for manipulating the recipes.
+ */
 @Service
 public class RecipesService {
     @Autowired
@@ -18,25 +21,22 @@ public class RecipesService {
     @Autowired
     private IngredientsService ingredientsService;
 
+    /**
+     * Saves a recipe.
+     *
+     * @param recipe - the recipe to be saved
+     */
     public void saveRecipe(Recipe recipe) {
         jpaRecipeRepository.saveAndFlush(recipe);
     }
 
-    public void addRecipeItemsToRecipe(RecipeItem recipeItem) {
-        Boolean ifPresent = true;
-        for (RecipeItem itemOnTheList : jpaRecipeItemsRepository.findAll()) {
-            if (itemOnTheList.getIngredient().getId().equals(recipeItem.getIngredient().getId())
-                    && itemOnTheList.getRecipe().getId().equals(recipeItem.getRecipe().getId())) {
-                itemOnTheList.setQuantity(recipeItem.getQuantity() + itemOnTheList.getQuantity());
-                jpaRecipeItemsRepository.saveAndFlush(itemOnTheList);
-                ifPresent = false;
-            }
-        }
-        if (ifPresent) {
-            jpaRecipeItemsRepository.saveAndFlush(recipeItem);
-        }
-    }
-
+    /**
+     * Creates and saves an item to the recipe.
+     *
+     * @param recipeId     - the recipe id
+     * @param ingredientId - the ingredient id
+     * @param itemQuantity - the item quantity
+     */
     public void addRecipeItemsToRecipe(UUID recipeId,
                                        UUID ingredientId,
                                        Integer itemQuantity) {
@@ -50,28 +50,62 @@ public class RecipesService {
 
     }
 
+    /**
+     * Gets all the recipes.
+     *
+     * @return - the recipes
+     */
     public List<Recipe> getRecipes() {
         return jpaRecipeRepository.findByOrderByNameAsc();
     }
 
+    /**
+     * Gets a recipe given its id.
+     *
+     * @param recipeId - the recipe id
+     * @return the recipe
+     */
     public Recipe getRecipeById(UUID recipeId) {
         return jpaRecipeRepository.findById(recipeId).get();
     }
 
+    /**
+     * \
+     * Gets a recipe item given its id.
+     *
+     * @param recipeItemId - the item id
+     * @return - the recipe item
+     */
     public RecipeItem getRecipeItem(UUID recipeItemId) {
         return jpaRecipeItemsRepository.findById(recipeItemId).get();
     }
 
+    /**
+     * Updates the recipe given its id and the new values.
+     *
+     * @param recipeId         - the recipe id
+     * @param recipeNewVersion - the updated recipe
+     */
     public void updateRecipe(UUID recipeId, Recipe recipeNewVersion) {
         Recipe recipeFromDb = getRecipeById(recipeId);
         recipeFromDb.setName(recipeNewVersion.getName());
         saveRecipe(recipeFromDb);
     }
 
+    /**
+     * Deletes a recipe given its id.
+     *
+     * @param recipeId - the recipe id
+     */
     public void deleteRecipe(UUID recipeId) {
         jpaRecipeRepository.deleteById(recipeId);
     }
 
+    /**
+     * Deletes a recipe item given its id.
+     *
+     * @param id - the item id
+     */
     public void deleteRecipeItem(UUID id) {
         jpaRecipeItemsRepository.deleteById(id);
     }

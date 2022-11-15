@@ -4,7 +4,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
+/**
+ * This is a controller for home
+ */
 @Controller
 public class HomeController {
     @GetMapping("/")

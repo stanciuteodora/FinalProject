@@ -4,6 +4,14 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This is an ingredient. It has 5 properties:
+ * The id of the ingredient
+ * The name of the ingredient
+ * The unit of measure of the ingredient
+ * The list of recipe items
+ * The list of the shopping list items
+ */
 @Entity
 @Table(name = "ingredients")
 public class Ingredient {
@@ -16,9 +24,19 @@ public class Ingredient {
     @OneToMany(mappedBy = "shoppingList", fetch = FetchType.LAZY)
     private List<ShoppingListItem> shoppingListItems;
 
+    /**
+     * Creates an ingredient.
+     */
     public Ingredient() {
     }
 
+    /**
+     * Creates an ingredient.
+     *
+     * @param id            id of the ingredient
+     * @param name          name of the ingredient
+     * @param unitOfMeasure unit of measure of the ingredient
+     */
     public Ingredient(UUID id, String name, String unitOfMeasure) {
         this.id = id;
         this.name = name;
@@ -64,40 +82,5 @@ public class Ingredient {
     public void setShoppingListItems(List<ShoppingListItem> shoppingListItems) {
         this.shoppingListItems = shoppingListItems;
     }
-//
-//    @Override
-//    public String toString() {
-//        return "Ingredient{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", unitOfMeasure='" + unitOfMeasure + '\'' +
-//                ", recipeItems=" + recipeItems +
-//                ", shoppingListItems=" + shoppingListItems +
-//                '}';
-//    }
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        Ingredient that = (Ingredient) o;
-//
-//        if (!id.equals(that.id)) return false;
-//        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-//        if (unitOfMeasure != null ? !unitOfMeasure.equals(that.unitOfMeasure) : that.unitOfMeasure != null)
-//            return false;
-//        if (recipeItems != null ? !recipeItems.equals(that.recipeItems) : that.recipeItems != null) return false;
-//        return shoppingListItems != null ? shoppingListItems.equals(that.shoppingListItems) : that.shoppingListItems == null;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        int result = id.hashCode();
-//        result = 31 * result + (name != null ? name.hashCode() : 0);
-//        result = 31 * result + (unitOfMeasure != null ? unitOfMeasure.hashCode() : 0);
-//        result = 31 * result + (recipeItems != null ? recipeItems.hashCode() : 0);
-//        result = 31 * result + (shoppingListItems != null ? shoppingListItems.hashCode() : 0);
-//        return result;
-//    }
+
 }
