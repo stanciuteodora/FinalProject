@@ -21,7 +21,7 @@ public class Ingredient {
     private String unitOfMeasure;
     @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
     private List<RecipeItem> recipeItems;
-    @OneToMany(mappedBy = "shoppingList", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ingredient", fetch = FetchType.LAZY)
     private List<ShoppingListItem> shoppingListItems;
 
     /**
