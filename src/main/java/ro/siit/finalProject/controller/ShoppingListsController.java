@@ -172,7 +172,6 @@ public class ShoppingListsController {
         if (shoppingListItemIds == null || itemQuantities == null) {
             return new RedirectView("/shoppingLists/edit/" + shoppingListId);
         }
-
         shoppingListsService.updateShoppingListItemQuantities(shoppingListItemIds, itemQuantities);
         return new RedirectView("/shoppingLists/edit/" + shoppingListId);
     }
